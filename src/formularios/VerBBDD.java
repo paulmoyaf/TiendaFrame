@@ -16,7 +16,16 @@ import formularios.Formulario;
 import formularios.Tabla;
 
 public class VerBBDD extends javax.swing.JFrame{
+	
 
+	public static ResultSet conexionResultSet(Conexion conexion) throws ClassNotFoundException, SQLException{
+		Statement sql = null;
+		ResultSet rs = null;
+		// Conexion conexion = new Conexion();
+		sql = conexion.conectarMySQL().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+		System.out.println("rs Establecida");
+		return rs = sql.executeQuery("select * from instrumentos");
+	}
 
 	public static ArrayList<Teclado> listar() throws ClassNotFoundException {
 
@@ -104,7 +113,8 @@ public class VerBBDD extends javax.swing.JFrame{
 			// Class.forName("com.mysql.jdbc.Driver");
 			try {
 				// conexion = DriverManager.getConnection(url, "root", "");
-				sql = conexion.conectarMySQL().createStatement();
+				sql = conexion.conectarMySQL().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+				// sql = conexion.conectarMySQL().createStatement();
 				System.out.println("Conexión establecida");
 				// sql = conexion.createStatement();
 
@@ -145,9 +155,11 @@ public class VerBBDD extends javax.swing.JFrame{
 					// return teclado;
 				}
 
-				conexion.conectarMySQL().close();
+				// conexion.conectarMySQL().close();
 				// conexion.close();
 				System.out.println("\nCerrando la conexión");
+				
+
 
 			} catch (SQLException e) {
 				System.out.println("ERROR AL EJECUTAR LA SENTENCIA SQL");
@@ -331,33 +343,14 @@ public class VerBBDD extends javax.swing.JFrame{
 		return teclado;
 }
 
-
-
-public static Teclado primer2Item() throws Exception {
+public static Teclado previousItem(ResultSet rs) throws Exception {
 	Teclado teclado = new Teclado();
 
-	try{
-		Conexion conexion = new Conexion();
-		conexion.conectarMySQL();
-		Statement sql = null;
-		ResultSet rs = null;
-		
-		sql = conexion.conectarMySQL().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-		System.out.println("Conexión establecida");
-		rs = sql.executeQuery("select * from instrumentos");
-		// rs.first();
+	try {
+		if (rs.isFirst() == false) {
+			rs.previous();
+			// rs.previous();
 
-		if (rs != null){
-			if(rs.next()){
-
-		
-		// if(rs.isFirst()==false){
-		// 	rs.next();
-
-		
-		
-
-		// 	do {
 			String id = rs.getString("codigo");
 			String marca = rs.getString("marca");
 			Double precio = rs.getDouble("precio");
@@ -386,15 +379,9 @@ public static Teclado primer2Item() throws Exception {
 			teclado.setConector(conector);
 
 			System.out.println(teclado.toString());
-		// 	} while(rs.next()); //repita mientras existan más datos
-		  }
-
-		
+		} else {
+			return teclado = null;
 		}
-		
-
-		// conexion.conectarMySQL().close();
-		// System.out.println("\nCerrando la conexión");
 
 	} catch (SQLException e) {
 		System.out.println("ERROR AL EJECUTAR LA SENTENCIA SQL");
@@ -402,6 +389,51 @@ public static Teclado primer2Item() throws Exception {
 	return teclado;
 }
 
+public static Teclado nextItem(ResultSet rs) throws Exception {
+	Teclado teclado = new Teclado();
+
+	try {
+		if (rs.isLast() == false) {
+			rs.next();
+			// rs.previous();
+
+			String id = rs.getString("codigo");
+			String marca = rs.getString("marca");
+			Double precio = rs.getDouble("precio");
+			Double dcto = rs.getDouble("descuento");
+			String tipo = rs.getString("tipo");
+			Boolean prime;
+			String color = rs.getString("color");
+			int teclas = rs.getInt("teclas");
+			String conector = rs.getString("conector");
+			String envio = rs.getString("envio");
+			String pvp = rs.getString("pvp");
+
+			if (tipo.equals("PRIME")) {
+				prime = true;
+			} else {
+				prime = false;
+			}
+
+			teclado.setId(id);
+			teclado.setMarca(marca);
+			teclado.setPrecio(precio);
+			teclado.setDcto(dcto);
+			teclado.setPrime(prime);
+			teclado.setColor(color);
+			teclado.setTeclas(teclas);
+			teclado.setConector(conector);
+
+			System.out.println(teclado.toString());
+		} else {
+			return teclado = null;
+		}
+
+	} catch (SQLException e) {
+		System.out.println("ERROR AL EJECUTAR LA SENTENCIA SQL");
+	}
+	return teclado;
+}
 
 }
 

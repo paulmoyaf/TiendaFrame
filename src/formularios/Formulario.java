@@ -3,7 +3,10 @@ package formularios;
 /* Importamos las componentes Swing, así como el paquete con los interfaces para los eventos */
 import javax.swing.*;
 
+import com.mysql.cj.xdevapi.Statement;
+
 import conexion.Conexion;
+import productos.Teclado;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -23,10 +26,14 @@ public class Formulario extends JFrame implements ActionListener {
   public static JTextArea txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code;
   public JLabel lb_id, lb_marca, lb_precio, lb_dcto, lb_tipo, lb_color, lb_teclas, lb_conector, lb_envio, lb_pvp, lb_code;
   public static JLabel lb_temp;
-  public JButton btForward, btNext, btAdd, btBorrar, btCambiar, btBuscar, btOk, btCancel, btVerBB, btLimpiar;
+  public static JButton btForward, btNext, btAdd, btBorrar, btCambiar, btBuscar, btOk, btCancel, btVerBB, btLimpiar;
   public JPanel p;
-  // Conexion co = new Conexion();
-	// co.conectarMySQL();
+
+
+  Conexion conexion = new Conexion();
+  
+  
+  static ResultSet rs = null;
 
   /*
    * En el constructor de la clase llamamos al método heredado de la clase JFrame
@@ -34,14 +41,18 @@ public class Formulario extends JFrame implements ActionListener {
    * informándole a la clase JFrame que utilizaremos posicionamiento absoluto para
    * los controles visuales dentro del JFrame
    */
-  public Formulario() {
-
+  public Formulario() throws ClassNotFoundException, SQLException {
+    java.sql.Statement sql = null;
+    Connection con = conexion.conectarMySQL();
     /* Configuración del JFrame */
     setLayout(null);
     setBounds(0, 0, 600, 600);
     setTitle("Music Store");
     setResizable(false);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+    // Conexion conexion = new Conexion();
+    // conexion.conectarMySQL();
 
     int y = 90;
     int yGap = 40;
@@ -232,11 +243,13 @@ public class Formulario extends JFrame implements ActionListener {
     btVerBB.addActionListener(this);
     btLimpiar.addActionListener(this);
     btNext.addActionListener(this);
-  
+    btForward.addActionListener(this);
+    
 
-
+    sql = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+    System.out.println("rs Establecida");
+    rs = sql.executeQuery("select * from instrumentos");
   }
-
 
 
   /* Método que implementa la acción del botón */
@@ -246,6 +259,7 @@ public class Formulario extends JFrame implements ActionListener {
     if (e.getSource() == btOk) {
       if (lb_temp.getText().equals("crear")){
         Formulario.crearItem();
+        
       }
 
       if (lb_temp.getText().equals("cambiar")){
@@ -304,15 +318,9 @@ public class Formulario extends JFrame implements ActionListener {
       btCancel.setVisible(false);
    }
 
-   if (e.getSource() == btNext) {
-    Formulario.verItem2();    
- }
-   
     if (e.getSource() == btVerBB) {
 
         try {
-
-
           VerBBDD.listar();
           Tabla tabla = new Tabla();
           tabla.setLocationRelativeTo(null);
@@ -328,7 +336,6 @@ public class Formulario extends JFrame implements ActionListener {
         }
     }
 
-
     if (e.getSource() == btCancel) {
       txt_code.setVisible(true);
       lb_code.setVisible(true);
@@ -341,6 +348,14 @@ public class Formulario extends JFrame implements ActionListener {
       btCancel.setVisible(false);
     }
 
+    if (e.getSource() == btNext) {
+      Formulario.nextItem();    
+   }
+
+   if (e.getSource() == btForward) {
+    Formulario.previousItem();    
+ }
+     
   }
 
  
@@ -422,21 +437,54 @@ public class Formulario extends JFrame implements ActionListener {
     }
   }
 
-
-
-
-  private static void verItem2() {
+  
+  private static void previousItem() {
     try {
-      txt_id.setText(VerBBDD.primer2Item().getId());
-      txt_marca.setText(VerBBDD.primer2Item().getMarca());
-      txt_precio.setText(Double.toString(VerBBDD.primer2Item().getPrecio()));
-      txt_dcto.setText(Double.toString(VerBBDD.primer2Item().getDcto()));
-      txt_tipo.setText(VerBBDD.primer2Item().isPrime());
-      txt_color.setText(VerBBDD.primer2Item().getColor());
-      txt_teclas.setText(Integer.toString(VerBBDD.primer2Item().getTeclas()));
-      txt_conector.setText(VerBBDD.primer2Item().getConector());
-      txt_envio.setText(VerBBDD.primer2Item().getEnvio());
-      txt_pvp.setText(Double.toString(VerBBDD.primer2Item().getPrecioVenta()));
+      Teclado teclado = new Teclado();
+      teclado = VerBBDD.previousItem(rs);
+      if(teclado!=null){
+      btNext.setEnabled(true);
+      txt_id.setText(teclado.getId());
+      txt_marca.setText(teclado.getMarca());
+      txt_precio.setText(Double.toString(teclado.getPrecio()));
+      txt_dcto.setText(Double.toString(teclado.getDcto()));
+      txt_tipo.setText(teclado.isPrime());
+      txt_color.setText(teclado.getColor());
+      txt_teclas.setText(Integer.toString(teclado.getTeclas()));
+      txt_conector.setText(teclado.getConector());
+      txt_envio.setText(teclado.getEnvio());
+      txt_pvp.setText(Double.toString(teclado.getPrecioVenta()));
+      }else{
+        btForward.setEnabled(false);
+        btNext.setEnabled(true);
+      }
+    } catch (Exception e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+  }
+
+  private static void nextItem() {
+    try {
+      Teclado teclado = new Teclado();
+      teclado = VerBBDD.nextItem(rs);
+      if(teclado!=null){
+      btForward.setEnabled(true);
+      txt_id.setText(teclado.getId());
+      txt_marca.setText(teclado.getMarca());
+      txt_precio.setText(Double.toString(teclado.getPrecio()));
+      txt_dcto.setText(Double.toString(teclado.getDcto()));
+      txt_tipo.setText(teclado.isPrime());
+      txt_color.setText(teclado.getColor());
+      txt_teclas.setText(Integer.toString(teclado.getTeclas()));
+      txt_conector.setText(teclado.getConector());
+      txt_envio.setText(teclado.getEnvio());
+      txt_pvp.setText(Double.toString(teclado.getPrecioVenta()));
+      }else{
+        btForward.setEnabled(true);
+        btNext.setEnabled(false);
+      }
+
 
     } catch (Exception e1) {
       // TODO Auto-generated catch block
@@ -480,5 +528,9 @@ public class Formulario extends JFrame implements ActionListener {
       e1.printStackTrace();
     }
   }
+
+
+
+
 
 }

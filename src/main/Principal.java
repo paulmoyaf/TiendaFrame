@@ -1,11 +1,13 @@
 package main;
+import java.sql.SQLException;
+
 import javax.swing.JFrame;
 
 import formularios.Formulario;
 import formularios.VentanaListener;
 
 public class Principal {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
 
         // App ventana = new App();
