@@ -58,7 +58,7 @@ public abstract class Producto implements Comparable<Producto> {
 
     public String isPrime() {
         String p = "PRIME";
-        String r = "Regular";
+        String r = "REGULAR";
         if(this.prime==true){
             return p;
         }else{
