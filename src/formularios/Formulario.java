@@ -24,7 +24,7 @@ public class Formulario extends JFrame implements ActionListener {
   /* Definimos variables. */
   public JTextField txt_idF, txt_1, txt_2, txt_3, txt_4, txt_5;
   // public static JTextArea txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code;
-  public static JTextField txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code;
+  public static JTextField txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code, txt_titulo;
   public JLabel lb_id, lb_marca, lb_precio, lb_dcto, lb_tipo, lb_color, lb_teclas, lb_conector, lb_envio, lb_pvp, lb_code;
   public static JLabel lb_temp, lb_recorreTemp;
   public static JButton btForward, btNext, btAdd, btBorrar, btCambiar, btBuscar, btOk, btCancel, btVerBB, btLimpiar;
@@ -55,9 +55,10 @@ public class Formulario extends JFrame implements ActionListener {
     setTitle("Music Store");
     setResizable(false);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
+    getContentPane().setBackground(Color.white);
 
     // Conexion conexion = new Conexion();
-
+    int x = -10;
     int y = 90;
     int yGap = 40;
 
@@ -67,62 +68,74 @@ public class Formulario extends JFrame implements ActionListener {
 
     /* Etiqueta de usuario */
     lb_id = new JLabel("Id:");
-    lb_id.setBounds(20, y+(0 * yGap), 100, 30);
+    lb_id.setBounds(x, y+(0 * yGap), 100, 30);
+    lb_id.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_id);
 
     lb_marca = new JLabel("Marca:");
-    lb_marca.setBounds(20, y+(1 * yGap), 100, 30);
+    lb_marca.setBounds(x, y+(1 * yGap), 100, 30);
+    lb_marca.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_marca);
 
     lb_precio = new JLabel("Precio:");
-    lb_precio.setBounds(20, y+(2 * yGap), 100, 30);
+    lb_precio.setBounds(x, y+(2 * yGap), 100, 30);
+    lb_precio.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_precio);
 
     lb_dcto = new JLabel("Descuento:");
-    lb_dcto.setBounds(20, y+(3 * yGap), 100, 30);
+    lb_dcto.setBounds(x, y+(3 * yGap), 100, 30);
+    lb_dcto.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_dcto);
 
     lb_tipo = new JLabel("Prime:");
-    lb_tipo.setBounds(20, y+(4 * yGap), 100, 30);
+    lb_tipo.setBounds(x, y+(4 * yGap), 100, 30);
+    lb_tipo.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_tipo);
 
     lb_color = new JLabel("Color:");
-    lb_color.setBounds(20, y+(5 * yGap), 100, 30);
+    lb_color.setBounds(x, y+(5 * yGap), 100, 30);
+    lb_color.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_color);
 
     lb_teclas = new JLabel("Teclas:");
-    lb_teclas.setBounds(20, y+(6 * yGap), 100, 30);
+    lb_teclas.setBounds(x, y+(6 * yGap), 100, 30);
+    lb_teclas.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_teclas);
 
     lb_conector = new JLabel("Conector:");
-    lb_conector.setBounds(20, y+(7 * yGap), 100, 30);
+    lb_conector.setBounds(x, y+(7 * yGap), 100, 30);
+    lb_conector.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_conector);
 
     lb_envio = new JLabel("Envío:");
-    lb_envio.setBounds(20, y+(8 * yGap), 100, 30);
+    lb_envio.setBounds(x, y+(8 * yGap), 100, 30);
+    lb_envio.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_envio);
 
     lb_pvp = new JLabel("PVP:");
-    lb_pvp.setBounds(20, y+(9 * yGap), 100, 30);
+    lb_pvp.setBounds(x, y+(9 * yGap), 100, 30);
+    lb_pvp.setHorizontalAlignment(SwingConstants.RIGHT);
     add(lb_pvp);
 
     lb_temp = new JLabel("dato_temp");
     lb_temp.setBounds(300, y+(10 * yGap), 100, 30);
     add(lb_temp);
-    lb_temp.setVisible(true);
+    lb_temp.setVisible(false);
 
     lb_recorreTemp = new JLabel("recorreTemp");
     lb_recorreTemp.setBounds(300, y+(11 * yGap), 100, 30);
     add(lb_recorreTemp);
-    lb_recorreTemp.setVisible(true);
+    lb_recorreTemp.setVisible(false);
 
 
-
-
-    /* Campo de texto */
-    // txt_idF=new JTextField();
-    // txt_idF.setBounds(100,15,150,20);
-    // add(txt_idF);
+    txt_titulo = new JTextField();
+    txt_titulo.setBounds(0, 0, 440, 38);
+    txt_titulo.setBackground(Color.ORANGE);
+    txt_titulo.setText("PAUL'S MUSIC STORE STOCK");
+    txt_titulo.setFont(new Font("MONOSPACED",1,16));
+    txt_titulo.setHorizontalAlignment(0);
+    txt_titulo.setEditable(false);
+    add(txt_titulo);
 
     txt_code = new JTextField();
     txt_code.setBounds(160, 55, 80, 20);
@@ -217,16 +230,16 @@ public class Formulario extends JFrame implements ActionListener {
 
     btVerBB = new JButton("Ver BBDD");
     btVerBB.setBounds(300, ybt+(9 * yGap), 100, 30);
-    btVerBB.setBackground(Color.GREEN);
-    btVerBB.setForeground(Color.white);
+    btVerBB.setBackground(Color.orange);
+    btVerBB.setForeground(Color.black);
     // btVerBB.setOpaque(true);
     // btVerBB.setFont(new Font("MONOSPACED",0,16));
     add(btVerBB);
 
     btLimpiar = new JButton("Limpiar");
     btLimpiar.setBounds(300, ybt+(10 * yGap), 100, 30);
-    btLimpiar.setBackground(Color.cyan);
-    btLimpiar.setForeground(Color.white);
+    btLimpiar.setBackground(Color.LIGHT_GRAY);
+    btLimpiar.setForeground(Color.black);
     // btLimpiar.setOpaque(true);
     // btVerBB.setFont(new Font("MONOSPACED",0,16));
     add(btLimpiar);
@@ -276,8 +289,7 @@ public class Formulario extends JFrame implements ActionListener {
     if (e.getSource() == btOk) {
       if (lb_temp.getText().equals("crear")){
         Formulario.crearItem();
-        Formulario.funcionLimpiar();
-        
+        Formulario.funcionLimpiar();        
       }
 
       if (lb_temp.getText().equals("cambiar")){
@@ -392,14 +404,16 @@ public class Formulario extends JFrame implements ActionListener {
       Formulario.nextItem();
       btCambiar.setVisible(true);
       btBorrar.setVisible(true);
-      lb_recorreTemp.setText(txt_id.getText());    
+      lb_recorreTemp.setText(txt_id.getText());
+      txt_code.setText("");    
    }
 
    if (e.getSource() == btForward) {
     Formulario.previousItem();
     btCambiar.setVisible(true);
     btBorrar.setVisible(true);
-    lb_recorreTemp.setText(txt_id.getText());     
+    lb_recorreTemp.setText(txt_id.getText());
+    txt_code.setText("");      
  }
      
   }
@@ -559,8 +573,8 @@ public class Formulario extends JFrame implements ActionListener {
 
   public static void cambiarItem(){
     try {
-      if(txt_id.getText().equals(lb_recorreTemp.getText())){
-        txt_code.setText(txt_id.getText());
+      if(txt_code.getText().equals("")){
+        txt_code.setText(lb_recorreTemp.getText());
       }
       VerBBDD.cambiarItem(
         txt_code.getText(), txt_id.getText(), txt_marca.getText(),  Double.parseDouble(txt_precio.getText()), 
