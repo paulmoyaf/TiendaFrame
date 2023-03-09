@@ -25,8 +25,8 @@ public class Tabla extends JFrame {
         desplazamiento = new JScrollPane(tabla);       
 
         // Parametros de la ventana
-        this.setTitle("JTable");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setTitle("Stock de Productos");
+        // this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
 
         // Modelo de la tabla
@@ -77,7 +77,7 @@ public class Tabla extends JFrame {
 
             //Se rellena con el array de listar Nivel2       
             //Nivel2 controlador, hace referencia a la clase donde se creó el método listar  
-            for(Teclado teclado : VerBBDD.listar()){
+            for(Teclado teclado : LecturaBBDD.listar()){
                 //Como dato nivel es de nivo nivel2, este puede acceder a los métodos get y set
                 modelo.addRow(new Object[]{	teclado.getId(),
 											teclado.getMarca(),

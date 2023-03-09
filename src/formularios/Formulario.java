@@ -3,6 +3,7 @@ package formularios;
 /* Importamos las componentes Swing, así como el paquete con los interfaces para los eventos */
 import javax.swing.*;
 
+import com.mysql.cj.x.protobuf.Mysqlx.Error;
 import com.mysql.cj.xdevapi.Statement;
 
 import conexion.Conexion;
@@ -25,7 +26,8 @@ public class Formulario extends JFrame implements ActionListener {
   public JTextField txt_idF, txt_1, txt_2, txt_3, txt_4, txt_5;
   // public static JTextArea txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code;
   public static JTextField txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code, txt_titulo;
-  public JLabel lb_id, lb_marca, lb_precio, lb_dcto, lb_tipo, lb_color, lb_teclas, lb_conector, lb_envio, lb_pvp, lb_code;
+  public JLabel lb_id, lb_marca, lb_precio, lb_dcto, lb_tipo, lb_color, lb_teclas, lb_conector, lb_envio, lb_pvp;
+  public static JLabel lb_code;
   public static JLabel lb_temp, lb_recorreTemp;
   public static JButton btForward, btNext, btAdd, btBorrar, btCambiar, btBuscar, btOk, btCancel, btVerBB, btLimpiar;
   public JPanel p;
@@ -34,7 +36,7 @@ public class Formulario extends JFrame implements ActionListener {
   
 
 
-  Conexion conexion = new Conexion();
+  static Conexion conexion = new Conexion();
   
   
   static ResultSet rs = null;
@@ -206,6 +208,7 @@ public class Formulario extends JFrame implements ActionListener {
 
     btForward = new JButton("Anterior");
     btForward.setBounds(300, ybt+(2 * yGap), 100, 30);
+    btForward.setEnabled(false);
     add(btForward);
 
     btNext = new JButton("Siguiente");
@@ -245,15 +248,17 @@ public class Formulario extends JFrame implements ActionListener {
     add(btLimpiar);
 
     btOk = new JButton("Aceptar");
-    btOk.setBounds(20, ybt+(11 * yGap), 100, 30);
+    btOk.setBounds(40, ybt+(11 * yGap), 100, 30);
     btOk.setVisible(false);
+    btOk.setBackground(Color.GREEN);
+    btOk.setForeground(Color.white);
     add(btOk);    
 
     btCancel = new JButton("Cancelar");
-    btCancel.setBounds(140, ybt+(11 * yGap), 100, 30);
+    btCancel.setBounds(160, ybt+(11 * yGap), 100, 30);
     btCancel.setVisible(false);
-    // btSalir.setBackground(Color.red);
-    // btSalir.setForeground(Color.white);
+    btCancel.setBackground(Color.red);
+    btCancel.setForeground(Color.white);
     // btCancel.setOpaque(true);
     // btCancel.setFont(new Font("MONOSPACED",0,16));
     add(btCancel);
@@ -281,38 +286,69 @@ public class Formulario extends JFrame implements ActionListener {
     rs = sql.executeQuery("select * from instrumentos");
   }
 
+  public static void newConexion() throws ClassNotFoundException, SQLException{
+    rs = null;
+    System.out.println("rs null");
+    java.sql.Statement sql = null;
+    Connection con = conexion.conectarMySQL();
 
+    sql = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+    System.out.println("rs nueva");
+    rs = sql.executeQuery("select * from instrumentos");
+  }
+
+//////////////////////////////////////////////////////////////////////////////////
   /* Método que implementa la acción del botón */
 
+
   public void actionPerformed(ActionEvent e) {
-    
+
     if (e.getSource() == btOk) {
-      if (lb_temp.getText().equals("crear")){
+      if (lb_temp.getText().equals("crear")) {
+
         Formulario.crearItem();
-        Formulario.funcionLimpiar();        
-      }
-
-      if (lb_temp.getText().equals("cambiar")){
-        Formulario.cambiarItem();
+        Formulario.habilitarTXT();
         Formulario.funcionLimpiar();
+        rs = null;
       }
+    
+      if (lb_temp.getText().equals("cambiar")) {
 
-      if (lb_temp.getText().equals("borrar")){
-        try {
-          Formulario.borrarItem();
-          // VerBBDD.borrarItem(txt_code.getText());
+        int in = JOptionPane.showOptionDialog(null, "Desea cambiar la información del item?", "Cambiar Información", 0,
+            1, null, new Object[] { "CAMBIAR", "CANCELAR" }, null);
+
+        if (in == 0) {
+          Formulario.cambiarItem();
           Formulario.funcionLimpiar();
-        } catch (Exception e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
+          rs = null;
+        }
+        if (in == 1) {
+          Formulario.funcionCancelar();
         }
       }
-      
+
+      if (lb_temp.getText().equals("borrar")) {
+
+        int in = JOptionPane.showOptionDialog(null, "Desea borrar la información del item?", "Cambiar Información", 0,
+            1, null, new Object[] { "BORRAR", "CANCELAR" }, null);
+
+        if (in == 0) {
+          try {
+            Formulario.borrarItem();
+            Formulario.funcionLimpiar();
+            rs = null;
+          } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+          }
+        }
+        if (in == 1) {
+          Formulario.funcionCancelar();
+        }
+      }
     }
-
-
-
-
+      
+    
 
     if (e.getSource() == btAdd) {
       lb_temp.setText("crear");
@@ -340,6 +376,7 @@ public class Formulario extends JFrame implements ActionListener {
       // btVerBB.setEnabled(false);
       // btLimpiar.setEnabled(false);
     }
+
     if (e.getSource() == btCambiar) {
       btOk.setVisible(true);
       btCancel.setVisible(true);
@@ -354,17 +391,22 @@ public class Formulario extends JFrame implements ActionListener {
     }
 
     if (e.getSource() == btBuscar) {
-      Formulario.desahabilitarTXT();
-      btBorrar.setVisible(true);
-      btCambiar.setVisible(true);
-      btForward.setEnabled(false);
-      btNext.setEnabled(false);
-      btAdd.setVisible(true);
-      Formulario.buscarItem();
+      // try {
+        Formulario.desahabilitarTXT();
+        btBorrar.setVisible(true);
+        btCambiar.setVisible(true);
+        btForward.setEnabled(false);
+        btNext.setEnabled(false);
+        btAdd.setVisible(true);
+        Formulario.buscarItem();
+      // } catch (Exception ex) {
+      //   JOptionPane.showMessageDialog(null, "Error con el servicio de conexión a la Base de Datos\n" + e, "Error Conexión", 0);
+      // }
     }
 
     if (e.getSource() == btLimpiar) {
       Formulario.funcionLimpiar();
+      rs=null;
    }
 
     if (e.getSource() == btVerBB) {
@@ -386,22 +428,22 @@ public class Formulario extends JFrame implements ActionListener {
     }
 
     if (e.getSource() == btCancel) {
-      txt_code.setVisible(true);
-      lb_code.setVisible(true);
-      btBorrar.setVisible(false);
-      btCambiar.setVisible(false);
-      btBuscar.setVisible(true);
-      Formulario.limpiarTXT();
-      Formulario.desahabilitarTXT();
-      btOk.setVisible(false);
-      btCancel.setVisible(false);
-      btForward.setEnabled(true);
-      btNext.setEnabled(true);
-      txt_code.setEnabled(true);
+      Formulario.funcionCancelar();
     }
 
     if (e.getSource() == btNext) {
+
+      if(rs==null){
+        try {
+          Formulario.newConexion();
+        } catch (ClassNotFoundException | SQLException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+      }
+
       Formulario.nextItem();
+      btAdd.setVisible(true);
       btCambiar.setVisible(true);
       btBorrar.setVisible(true);
       lb_recorreTemp.setText(txt_id.getText());
@@ -409,23 +451,50 @@ public class Formulario extends JFrame implements ActionListener {
    }
 
    if (e.getSource() == btForward) {
+
+    if(rs==null){
+      try {
+        Formulario.newConexion();
+      } catch (ClassNotFoundException | SQLException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+    }
+
     Formulario.previousItem();
+    btAdd.setVisible(true);
     btCambiar.setVisible(true);
     btBorrar.setVisible(true);
     lb_recorreTemp.setText(txt_id.getText());
     txt_code.setText("");      
- }
+    }
      
   }
 
+  public static void funcionCancelar(){
+    txt_code.setVisible(true);
+    lb_code.setVisible(true);
+    btBorrar.setVisible(false);
+    btCambiar.setVisible(false);
+    btOk.setVisible(false);
+    btForward.setEnabled(false);
+    btNext.setEnabled(true);
+    btBuscar.setVisible(true);
+    Formulario.limpiarTXT();
+    Formulario.desahabilitarTXT();
+    btCancel.setVisible(false);
+    txt_code.setEnabled(true);
+    rs=null;
+  }
+
   public static void funcionLimpiar(){
+    txt_code.setEnabled(true);
     btBorrar.setVisible(false);
     btCambiar.setVisible(false);
     btOk.setVisible(false);
     btCancel.setVisible(false);
-    btForward.setEnabled(true);
+    btForward.setEnabled(false);
     btNext.setEnabled(true);
-    txt_code.setEnabled(true);
     btAdd.setVisible(true);
     btBuscar.setVisible(true);
     Formulario.limpiarTXT();
@@ -473,17 +542,17 @@ public class Formulario extends JFrame implements ActionListener {
 
   private static void buscarItem() {
     try {
-      txt_id.setText(VerBBDD.buscarItem(txt_code.getText()).getId());
-      txt_marca.setText(VerBBDD.buscarItem(txt_code.getText()).getMarca());
-      txt_precio.setText(Double.toString(VerBBDD.buscarItem(txt_code.getText()).getPrecio()));
-      txt_dcto.setText(String.valueOf(VerBBDD.buscarItem(txt_code.getText()).getDcto()));
-      txt_tipo.setText(VerBBDD.buscarItem(txt_code.getText()).isPrime());
-      combo.setSelectedItem(VerBBDD.buscarItem(txt_code.getText()).isPrime());
-      txt_color.setText(VerBBDD.buscarItem(txt_code.getText()).getColor());
-      txt_teclas.setText(Integer.toString(VerBBDD.buscarItem(txt_code.getText()).getTeclas()));
-      txt_conector.setText(VerBBDD.buscarItem(txt_code.getText()).getConector());
-      txt_envio.setText(VerBBDD.buscarItem(txt_code.getText()).getEnvio());
-      txt_pvp.setText(Double.toString(VerBBDD.buscarItem(txt_code.getText()).getPrecioVenta()));
+      txt_id.setText(LecturaBBDD.buscarItem(txt_code.getText()).getId());
+      txt_marca.setText(LecturaBBDD.buscarItem(txt_code.getText()).getMarca());
+      txt_precio.setText(Double.toString(LecturaBBDD.buscarItem(txt_code.getText()).getPrecio()));
+      txt_dcto.setText(String.valueOf(LecturaBBDD.buscarItem(txt_code.getText()).getDcto()));
+      txt_tipo.setText(LecturaBBDD.buscarItem(txt_code.getText()).isPrime());
+      combo.setSelectedItem(LecturaBBDD.buscarItem(txt_code.getText()).isPrime());
+      txt_color.setText(LecturaBBDD.buscarItem(txt_code.getText()).getColor());
+      txt_teclas.setText(Integer.toString(LecturaBBDD.buscarItem(txt_code.getText()).getTeclas()));
+      txt_conector.setText(LecturaBBDD.buscarItem(txt_code.getText()).getConector());
+      txt_envio.setText(LecturaBBDD.buscarItem(txt_code.getText()).getEnvio());
+      txt_pvp.setText(Double.toString(LecturaBBDD.buscarItem(txt_code.getText()).getPrecioVenta()));
      
     } catch (Exception e1) {
       System.out.println("no existe");
@@ -496,17 +565,17 @@ public class Formulario extends JFrame implements ActionListener {
   private static void verItem() {
     try {
       
-      txt_id.setText(VerBBDD.primerItem().getId());
-      txt_marca.setText(VerBBDD.primerItem().getMarca());
-      txt_precio.setText(Double.toString(VerBBDD.primerItem().getPrecio()));
-      txt_dcto.setText(Double.toString(VerBBDD.primerItem().getDcto()));
-      txt_tipo.setText(VerBBDD.primerItem().isPrime());
-      combo.setSelectedItem(VerBBDD.primerItem().isPrime());
-      txt_color.setText(VerBBDD.primerItem().getColor());
-      txt_teclas.setText(Integer.toString(VerBBDD.primerItem().getTeclas()));
-      txt_conector.setText(VerBBDD.primerItem().getConector());
-      txt_envio.setText(VerBBDD.primerItem().getEnvio());
-      txt_pvp.setText(Double.toString(VerBBDD.primerItem().getPrecioVenta()));
+      txt_id.setText(LecturaBBDD.primerItem().getId());
+      txt_marca.setText(LecturaBBDD.primerItem().getMarca());
+      txt_precio.setText(Double.toString(LecturaBBDD.primerItem().getPrecio()));
+      txt_dcto.setText(Double.toString(LecturaBBDD.primerItem().getDcto()));
+      txt_tipo.setText(LecturaBBDD.primerItem().isPrime());
+      combo.setSelectedItem(LecturaBBDD.primerItem().isPrime());
+      txt_color.setText(LecturaBBDD.primerItem().getColor());
+      txt_teclas.setText(Integer.toString(LecturaBBDD.primerItem().getTeclas()));
+      txt_conector.setText(LecturaBBDD.primerItem().getConector());
+      txt_envio.setText(LecturaBBDD.primerItem().getEnvio());
+      txt_pvp.setText(Double.toString(LecturaBBDD.primerItem().getPrecioVenta()));
 
     } catch (Exception e1) {
       // TODO Auto-generated catch block
@@ -518,7 +587,7 @@ public class Formulario extends JFrame implements ActionListener {
   private static void previousItem() {
     try {
       Teclado teclado = new Teclado();
-      teclado = VerBBDD.previousItem(rs);
+      teclado = LecturaBBDD.previousItem(rs);
       if(teclado!=null){
       btNext.setEnabled(true);
       txt_id.setText(teclado.getId());
@@ -545,7 +614,7 @@ public class Formulario extends JFrame implements ActionListener {
   private static void nextItem() {
     try {
       Teclado teclado = new Teclado();
-      teclado = VerBBDD.nextItem(rs);
+      teclado = LecturaBBDD.nextItem(rs);
       if(teclado!=null){
       btForward.setEnabled(true);
       txt_id.setText(teclado.getId());
@@ -576,14 +645,43 @@ public class Formulario extends JFrame implements ActionListener {
       if(txt_code.getText().equals("")){
         txt_code.setText(lb_recorreTemp.getText());
       }
-      VerBBDD.cambiarItem(
+      LecturaBBDD.cambiarItem(
         txt_code.getText(), txt_id.getText(), txt_marca.getText(),  Double.parseDouble(txt_precio.getText()), 
         Double.parseDouble(txt_dcto.getText()), String.valueOf(combo.getSelectedItem()), txt_color.getText(),  Integer.parseInt(txt_teclas.getText()),
         txt_conector.getText(), txt_envio.getText(),  Double.parseDouble(txt_pvp.getText()));
     } catch (Exception e1) {
       // TODO Auto-generated catch block
+      JOptionPane.showMessageDialog(null, "Error, verifica que esten bien ingresados los datos\n" + e1,"Error de Datos", 0);
       e1.printStackTrace();
     }
+  }
+
+  public static void crearItem() {
+    // Exception e2 = null;
+    try {
+        Double total = Double.parseDouble(txt_precio.getText())
+            - ((Double.parseDouble(txt_precio.getText()) * Double.parseDouble(txt_dcto.getText())) / 100);
+
+          if (txt_tipo.getText().equals("PRIME")) {
+            txt_envio.setText("GRATIS");
+            txt_pvp.setText(String.valueOf(total));
+          } else {
+            txt_envio.setText("+15€");
+            txt_pvp.setText(String.valueOf(total + 15));
+          }
+
+          LecturaBBDD.crearItem(
+              txt_id.getText(), txt_marca.getText(), Double.parseDouble(txt_precio.getText()),
+              Double.parseDouble(txt_dcto.getText()), String.valueOf(combo.getSelectedItem()), txt_color.getText(),
+              Integer.parseInt(txt_teclas.getText()),
+              txt_conector.getText());
+
+
+          } catch (Exception e1) {
+            e1.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error, verifica que esten bien ingresados los datos\n" + e1,
+            "Error de Datos", 0);
+          }
   }
 
   public static void borrarItem(){
@@ -591,41 +689,17 @@ public class Formulario extends JFrame implements ActionListener {
       if(txt_id.getText().equals(lb_recorreTemp.getText())){
         txt_code.setText(txt_id.getText());
       }
-      VerBBDD.borrarItem(txt_code.getText());
+      LecturaBBDD.borrarItem(txt_code.getText());
     } catch (Exception e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
   }
-
-  public static void crearItem(){
-    try {
-      Double total = Double.parseDouble(txt_precio.getText()) - ((Double.parseDouble(txt_precio.getText()) * Double.parseDouble(txt_dcto.getText()))/100);
-
-      if(txt_tipo.getText().equals("PRIME")){
-        txt_envio.setText("GRATIS");
-        txt_pvp.setText(String.valueOf(total));
-      }else{
-        txt_envio.setText("+15€");
-        txt_pvp.setText(String.valueOf(total+15));
-      }
-
-      // combo.getSelectedItem();
-
-      VerBBDD.crearItem(
-        txt_id.getText(), txt_marca.getText(),  Double.parseDouble(txt_precio.getText()), 
-        Double.parseDouble(txt_dcto.getText()), String.valueOf(combo.getSelectedItem()), txt_color.getText(),  Integer.parseInt(txt_teclas.getText()),
-        txt_conector.getText());
-
-        
-    } catch (Exception e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    }
-  }
-
-
-
 
 
 }
+
+
+
+
+

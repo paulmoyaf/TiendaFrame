@@ -2,7 +2,7 @@ package formularios;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 
-public class VentanaListener implements WindowListener{
+public class FormListener implements WindowListener{
 
     public void windowActivated(WindowEvent arg0) {
         

@@ -16,7 +16,7 @@ import productos.Teclado;
 import formularios.Formulario;
 import formularios.Tabla;
 
-public class VerBBDD extends javax.swing.JFrame{
+public class LecturaBBDD extends javax.swing.JFrame{
 	
 
 	public static ResultSet conexionResultSet(Conexion conexion) throws ClassNotFoundException, SQLException{
