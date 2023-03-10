@@ -3,9 +3,6 @@ package formularios;
 /* Importamos las componentes Swing, así como el paquete con los interfaces para los eventos */
 import javax.swing.*;
 
-import com.mysql.cj.x.protobuf.Mysqlx.Error;
-import com.mysql.cj.xdevapi.Statement;
-
 import conexion.Conexion;
 import productos.Teclado;
 
@@ -13,32 +10,24 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.*;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /* La clase JFrame encapsula el concepto de una ventana, para implementar una aplicación que muestre una ventana debemos plantear una clase que herede de la clase JFrame e implemente a a ActionListener para el evento del botón*/
 public class Formulario extends JFrame implements ActionListener {
 
   /* Definimos variables. */
-  public JTextField txt_idF, txt_1, txt_2, txt_3, txt_4, txt_5;
   // public static JTextArea txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code;
   public static JTextField txt_id, txt_marca, txt_precio, txt_dcto, txt_tipo, txt_color, txt_teclas, txt_conector, txt_envio, txt_pvp, txt_code, txt_titulo;
   public JLabel lb_id, lb_marca, lb_precio, lb_dcto, lb_tipo, lb_color, lb_teclas, lb_conector, lb_envio, lb_pvp;
-  public static JLabel lb_code;
-  public static JLabel lb_temp, lb_recorreTemp;
+  public static JLabel lb_code, lb_temp, lb_recorreTemp;
   public static JButton btForward, btNext, btAdd, btBorrar, btCambiar, btBuscar, btOk, btCancel, btVerBB, btLimpiar;
   public JPanel p;
+
   String[] lista = {"PRIME", "REGULAR"};
   public static JComboBox<String> combo;
   
-
-
   static Conexion conexion = new Conexion();
-  
-  
   static ResultSet rs = null;
 
   /*
@@ -51,6 +40,7 @@ public class Formulario extends JFrame implements ActionListener {
   
     java.sql.Statement sql = null;
     Connection con = conexion.conectarMySQL();
+
     /* Configuración del JFrame */
     setLayout(null);
     setBounds(0, 0, 440, 600);
@@ -59,7 +49,6 @@ public class Formulario extends JFrame implements ActionListener {
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     getContentPane().setBackground(Color.white);
 
-    // Conexion conexion = new Conexion();
     int x = -10;
     int y = 90;
     int yGap = 40;
@@ -204,6 +193,8 @@ public class Formulario extends JFrame implements ActionListener {
 
     btBuscar = new JButton("Buscar");
     btBuscar.setBounds(300, ybt+(0 * yGap), 100, 30);
+    btBuscar.setBackground(Color.DARK_GRAY);
+    btBuscar.setForeground(Color.white);
     add(btBuscar);
 
     btForward = new JButton("Anterior");
@@ -229,22 +220,16 @@ public class Formulario extends JFrame implements ActionListener {
     btBorrar.setVisible(false);
     add(btBorrar);
 
-
-
-    btVerBB = new JButton("Ver BBDD");
+    btVerBB = new JButton("Mostrar BD");
     btVerBB.setBounds(300, ybt+(9 * yGap), 100, 30);
     btVerBB.setBackground(Color.orange);
     btVerBB.setForeground(Color.black);
-    // btVerBB.setOpaque(true);
-    // btVerBB.setFont(new Font("MONOSPACED",0,16));
     add(btVerBB);
 
     btLimpiar = new JButton("Limpiar");
     btLimpiar.setBounds(300, ybt+(10 * yGap), 100, 30);
     btLimpiar.setBackground(Color.LIGHT_GRAY);
     btLimpiar.setForeground(Color.black);
-    // btLimpiar.setOpaque(true);
-    // btVerBB.setFont(new Font("MONOSPACED",0,16));
     add(btLimpiar);
 
     btOk = new JButton("Aceptar");
@@ -259,10 +244,10 @@ public class Formulario extends JFrame implements ActionListener {
     btCancel.setVisible(false);
     btCancel.setBackground(Color.red);
     btCancel.setForeground(Color.white);
-    // btCancel.setOpaque(true);
-    // btCancel.setFont(new Font("MONOSPACED",0,16));
     add(btCancel);
 
+
+    /* Inicializar datos */
     Formulario.desahabilitarTXT();
     txt_envio.setEditable(false);
     txt_pvp.setEditable(false);
@@ -286,17 +271,6 @@ public class Formulario extends JFrame implements ActionListener {
     rs = sql.executeQuery("select * from instrumentos");
   }
 
-  public static void newConexion() throws ClassNotFoundException, SQLException{
-    rs = null;
-    System.out.println("rs null");
-    java.sql.Statement sql = null;
-    Connection con = conexion.conectarMySQL();
-
-    sql = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-    System.out.println("rs nueva");
-    rs = sql.executeQuery("select * from instrumentos");
-  }
-
 //////////////////////////////////////////////////////////////////////////////////
   /* Método que implementa la acción del botón */
 
@@ -306,10 +280,12 @@ public class Formulario extends JFrame implements ActionListener {
     if (e.getSource() == btOk) {
       if (lb_temp.getText().equals("crear")) {
 
-        Formulario.crearItem();
-        Formulario.habilitarTXT();
-        Formulario.funcionLimpiar();
-        rs = null;
+        if(Formulario.crearItem()==true){
+          Formulario.crearItem();
+          Formulario.habilitarTXT();
+          Formulario.funcionLimpiar();
+          rs = null;
+        }        
       }
     
       if (lb_temp.getText().equals("cambiar")) {
@@ -318,13 +294,16 @@ public class Formulario extends JFrame implements ActionListener {
             1, null, new Object[] { "CAMBIAR", "CANCELAR" }, null);
 
         if (in == 0) {
-          Formulario.cambiarItem();
-          Formulario.funcionLimpiar();
-          rs = null;
+          if (Formulario.cambiarItem() == true) {
+            Formulario.cambiarItem();
+            Formulario.funcionLimpiar();
+            rs = null;
+          }
         }
         if (in == 1) {
           Formulario.funcionCancelar();
         }
+
       }
 
       if (lb_temp.getText().equals("borrar")) {
@@ -415,9 +394,7 @@ public class Formulario extends JFrame implements ActionListener {
           // VerBBDD.listar();
           Tabla tabla = new Tabla();
           tabla.setLocationRelativeTo(null);
-          tabla.setVisible(true);
-          // Formulario.verItem();      
-          
+          tabla.setVisible(true);          
         } catch (ClassNotFoundException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -640,7 +617,8 @@ public class Formulario extends JFrame implements ActionListener {
     }
   }
 
-  public static void cambiarItem(){
+  public static boolean cambiarItem(){
+    boolean bool = true;
     try {
       if(txt_code.getText().equals("")){
         txt_code.setText(lb_recorreTemp.getText());
@@ -651,13 +629,15 @@ public class Formulario extends JFrame implements ActionListener {
         txt_conector.getText(), txt_envio.getText(),  Double.parseDouble(txt_pvp.getText()));
     } catch (Exception e1) {
       // TODO Auto-generated catch block
-      JOptionPane.showMessageDialog(null, "Error, verifica que esten bien ingresados los datos\n" + e1,"Error de Datos", 0);
       e1.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Error, verifica que esten bien ingresados los datos\n" + e1,"Error de Datos", 0);
+      bool = false;
     }
+    return bool;
   }
 
-  public static void crearItem() {
-    // Exception e2 = null;
+  public static boolean crearItem() {
+    boolean bool = true;
     try {
         Double total = Double.parseDouble(txt_precio.getText())
             - ((Double.parseDouble(txt_precio.getText()) * Double.parseDouble(txt_dcto.getText())) / 100);
@@ -681,7 +661,9 @@ public class Formulario extends JFrame implements ActionListener {
             e1.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error, verifica que esten bien ingresados los datos\n" + e1,
             "Error de Datos", 0);
+            bool = false;
           }
+    return bool;
   }
 
   public static void borrarItem(){
@@ -694,6 +676,17 @@ public class Formulario extends JFrame implements ActionListener {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
+  }
+
+  public static void newConexion() throws ClassNotFoundException, SQLException{
+    rs = null;
+    System.out.println("rs null");
+    java.sql.Statement sql = null;
+    Connection con = conexion.conectarMySQL();
+
+    sql = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+    System.out.println("rs nueva");
+    rs = sql.executeQuery("select * from instrumentos");
   }
 
 
