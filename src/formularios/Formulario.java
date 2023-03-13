@@ -25,6 +25,8 @@ public class Formulario extends JFrame implements ActionListener {
   public static JButton btForward, btNext, btAdd, btBorrar, btCambiar, btBuscar, btOk, btCancel, btVerBB, btLimpiar;
   public JPanel p;
 
+  private static Tabla tabla = null;
+
   String[] lista = {"PRIME", "REGULAR"};
   public static JComboBox<String> combo;
   
@@ -48,6 +50,7 @@ public class Formulario extends JFrame implements ActionListener {
     setTitle("Music Store");
     setResizable(false);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
+    this.setLocationRelativeTo(null);
     getContentPane().setBackground(Color.white);
 
     int x = -10;
@@ -287,6 +290,10 @@ public class Formulario extends JFrame implements ActionListener {
           Formulario.habilitarTXT();
           Formulario.funcionLimpiar();
           rs = null;
+          if (tabla.isShowing()) {
+            tabla.dispose();
+            showTable();
+          }
         }        
       }
     
@@ -300,6 +307,10 @@ public class Formulario extends JFrame implements ActionListener {
             Formulario.cambiarItem();
             Formulario.funcionLimpiar();
             rs = null;
+            if (tabla.isShowing()) {
+              tabla.dispose();
+              showTable();
+            }
           }
         }
         if (in == 1) {
@@ -318,6 +329,10 @@ public class Formulario extends JFrame implements ActionListener {
             Formulario.borrarItem();
             Formulario.funcionLimpiar();
             rs = null;
+            if (tabla.isShowing()) {
+              tabla.dispose();
+              showTable();
+            }
           } catch (Exception e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -391,20 +406,12 @@ public class Formulario extends JFrame implements ActionListener {
    }
 
     if (e.getSource() == btVerBB) {
-
-        try {
-          // VerBBDD.listar();
-          Tabla tabla = new Tabla();
-          tabla.setLocationRelativeTo(null);
-          tabla.setVisible(true);          
-        } catch (ClassNotFoundException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        } catch (Exception e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
+      showTable();
     }
+
+
+
+    
 
     if (e.getSource() == btCancel) {
       Formulario.funcionCancelar();
@@ -449,6 +456,23 @@ public class Formulario extends JFrame implements ActionListener {
     }
      
   }
+
+  private static void showTable(){
+    try {
+      // VerBBDD.listar();
+      tabla = new Tabla();
+      tabla.setLocationRelativeTo(null);
+      tabla.setVisible(true);
+    } catch (ClassNotFoundException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (Exception e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+  }
+  
+  
 
   public static void funcionCancelar(){
     txt_code.setVisible(true);

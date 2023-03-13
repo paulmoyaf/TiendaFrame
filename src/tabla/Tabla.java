@@ -22,30 +22,17 @@ import productos.Teclado;
 public class Tabla extends JFrame {
 
     private static JTable tabla = null;
-    DefaultTableModel modelo = null;
-    JScrollPane desplazamiento = null;
-    public static JButton btAdd, btBorrar, btCambiar, btGuardar, btCancel;
-    public static ImageIcon imageCambiar = new ImageIcon("icono/cambiar1.png");
-    public static ImageIcon imageBorrar = new ImageIcon("icono/eliminar1.png");
-    public static JLabel lb_codeTemp;
+    private static DefaultTableModel modelo = null;
+    private static JScrollPane desplazamiento = null;
+    private static JButton btAdd, btBorrar, btCambiar, btGuardar, btCancel;
+    private static ImageIcon imageCambiar = new ImageIcon("icono/cambiar1.png");
+    private static ImageIcon imageBorrar = new ImageIcon("icono/eliminar1.png");
+    private static JLabel lb_codeTemp;
     
 
     public Tabla() throws Exception {
         String[] columnas = {"Código", "Marca", "Precio", "Descuento", "Tipo", "Color","Teclas","Conector","Envío","PVP","1","2"};
-        
-        int ybt = 50;
-        int yGap = 50;
-
-        btAdd = new JButton("Crear");
-        btAdd.setBounds(20, ybt+(7 * yGap), 100, 30);
-        add(btAdd);
-        btGuardar = new JButton("Guardar");
-        btGuardar.setBounds(140, ybt+(7 * yGap), 100, 30);
-        add(btGuardar);
-        btCancel = new JButton("Cancelar");
-        btCancel.setBounds(280, ybt+(7 * yGap), 100, 30);
-        add(btCancel);
-        
+            
         tabla = new JTable();
         modelo = new DefaultTableModel();
         desplazamiento = new JScrollPane(tabla);  
@@ -64,28 +51,33 @@ public class Tabla extends JFrame {
         // Barras de desplazamiento
         desplazamiento.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         desplazamiento.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        // desplazamiento.setPreferredSize(400,600);
 
         // Propiedades de la tabla
-        
         tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        // tabla.setPreferredScrollableViewportSize(tabla.getPreferredSize());
         tabla.setFillsViewportHeight(true);
+
 // 
         tabla.setModel(modelo);
-        tabla.getPreferredSize();
+        // tabla.getPreferredSize();
         tabla.setRowHeight(50);
         // tabla.setEnabled(false);
 
-        // this.addMouseListener(tabla);
-
         // Agregamos datos
-        // this.agregarDatos(modelo);
         this.llenarJTabla(tabla);
         
+        
+        int ybt = 50;
+        int yGap = 50;
     
-        lb_codeTemp = new JLabel("nada");
+        lb_codeTemp = new JLabel("temp");
         lb_codeTemp.setBounds(20, ybt+(7* yGap), 100, 30);
+        lb_codeTemp.setVisible(false);
         add(lb_codeTemp);
+
+        btAdd = new JButton("Crear");
+        btAdd.setBounds(20, ybt+(7 * yGap), 100, 30);
+        add(btAdd);
 
 
         tabla.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -95,15 +87,12 @@ public class Tabla extends JFrame {
                 lb_codeTemp.setText(tempMouseClicked(evt));
                 codeTemp = lb_codeTemp.getText();
                 try {
-                    // mouseSimple(evt, codeTemp);
                     tablaMouseClicked(evt, codeTemp);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
-
-
         });
 
 
@@ -170,13 +159,6 @@ public class Tabla extends JFrame {
         return codeTemp;
     }
 
-    private void mouseSimple(java.awt.event.MouseEvent evt, String codeTemp) throws Exception{
-    
-        int row = tabla.getSelectedRow();
-        Teclado teclado = new Teclado();
-        teclado = obtenerObj(row);
-    }
-
     private void tablaMouseClicked(java.awt.event.MouseEvent evt, String codeTemp) throws Exception{
         // tabla.setEnabled(true);
         
@@ -199,9 +181,9 @@ public class Tabla extends JFrame {
                         LecturaBBDD.cambiarItem(codeTemp,teclado.getId(),teclado.getMarca(),teclado.getPrecio(),teclado.getDcto(),teclado.isPrime(),teclado.getColor(),teclado.getTeclas(),teclado.getConector());
                         System.out.println("cambiado");
                         JOptionPane.showMessageDialog(null, "Item modificado correctamente", "Modificación de Item", 1);
-                        tabla.removeAll();
-                        llenarJTabla(tabla);
-                        } catch (Exception e) {
+                        limpiarJTabla(tabla);
+                        llenarJTabla(tabla);    
+                    } catch (Exception e) {
                         JOptionPane.showMessageDialog(null, "Error" + e, "Error", 0);
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -209,11 +191,12 @@ public class Tabla extends JFrame {
                     
                 }
                 if(boton.getName().equals("b")){
+                    //EVENTOS ELIMINAR
                     JOptionPane.showConfirmDialog(null, "Desea eliminar este registro", "Confirmar", JOptionPane.OK_CANCEL_OPTION);
                     LecturaBBDD.borrarItem(codeTemp);
                     JOptionPane.showMessageDialog(null, "Item eliminado", "Eliminación de Item", 1);
-                    System.out.println("ALGO SE HIZO");
-                    //EVENTOS ELIMINAR
+                    limpiarJTabla(tabla);
+                    llenarJTabla(tabla);
                 }
             }
             if(value instanceof JCheckBox){
@@ -229,7 +212,13 @@ public class Tabla extends JFrame {
         }
     }
 
-    
+    public void limpiarJTabla(JTable jTabla){
+        while(jTabla.getRowCount()>0)
+        {
+            modelo.removeRow(0);
+        }
+    }
+
     public void llenarJTabla(JTable jtTeclados)throws Exception{
 
         try{
@@ -258,10 +247,6 @@ public class Tabla extends JFrame {
 
             //se rellena con cada una de las columnas al array
 
-            // for(Object columna : nombreColumna){
-            //     modelo.addColumn(columna);
-            // }
- 
             for(Teclado teclado : LecturaBBDD.listar()){
                 modelo.addRow(new Object[]{	teclado.getId(),
 											teclado.getMarca(),
