@@ -18,6 +18,7 @@ pvp numeric (8,2) as (if (tipo = 'PRIME', (precio - (precio*descuento)/100) , (p
 alter table instrumentos add constraint ch_dcto check (descuento between 0 and 100);
 alter table instrumentos add constraint ch_precio check (precio >= 0);
 alter table instrumentos add constraint ch_teclas check (teclas > 0);
+
 alter table instrumentos add column envio varchar (20) as (if (tipo = 'PRIME', 'GRATIS', '+15€'));
 alter table instrumentos add column pvp numeric (8,2) as (if (tipo = 'PRIME', (precio - (precio*descuento)/100) , (precio - (precio*descuento)/100) + 15));
 
