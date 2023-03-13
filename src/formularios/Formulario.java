@@ -5,6 +5,7 @@ import javax.swing.*;
 
 import conexion.Conexion;
 import productos.Teclado;
+import tabla.Tabla;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -36,7 +37,7 @@ public class Formulario extends JFrame implements ActionListener {
    * informándole a la clase JFrame que utilizaremos posicionamiento absoluto para
    * los controles visuales dentro del JFrame
    */
-  public Formulario() throws ClassNotFoundException, SQLException {
+  public Formulario() throws Exception {
   
     java.sql.Statement sql = null;
     Connection con = conexion.conectarMySQL();
@@ -269,6 +270,7 @@ public class Formulario extends JFrame implements ActionListener {
     sql = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
     System.out.println("rs lista");
     rs = sql.executeQuery("select * from instrumentos");
+ 
   }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -626,7 +628,7 @@ public class Formulario extends JFrame implements ActionListener {
       LecturaBBDD.cambiarItem(
         txt_code.getText(), txt_id.getText(), txt_marca.getText(),  Double.parseDouble(txt_precio.getText()), 
         Double.parseDouble(txt_dcto.getText()), String.valueOf(combo.getSelectedItem()), txt_color.getText(),  Integer.parseInt(txt_teclas.getText()),
-        txt_conector.getText(), txt_envio.getText(),  Double.parseDouble(txt_pvp.getText()));
+        txt_conector.getText());
     } catch (Exception e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();

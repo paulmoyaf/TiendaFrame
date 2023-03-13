@@ -1,4 +1,4 @@
-package formularios;
+package tabla;
 
 import java.awt.Component;
 

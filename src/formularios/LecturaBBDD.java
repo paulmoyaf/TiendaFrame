@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 import conexion.Conexion;
 import productos.Teclado;
 import formularios.Formulario;
-import formularios.Tabla;
 
 public class LecturaBBDD extends javax.swing.JFrame{
 	
@@ -97,7 +96,6 @@ public class LecturaBBDD extends javax.swing.JFrame{
 	}
 
 	public static Teclado buscarItem(String txt_code) throws Exception {
-		DefaultTableModel modelo = new DefaultTableModel();
 
 		Conexion conexion = new Conexion();
 		
@@ -160,13 +158,11 @@ public class LecturaBBDD extends javax.swing.JFrame{
 	}
 
 	public static void cambiarItem(String txt_code, String txt_id, String txt_marca, Double txt_precio, Double txt_dcto,
-			String combo, String txt_color, Integer txt_teclas, String txt_conector, String txt_envio,
-			Double txt_pvp) throws Exception {
-		DefaultTableModel modelo = new DefaultTableModel();
-
+			String combo, String txt_color, Integer txt_teclas, String txt_conector) throws Exception {
+	
 		Connection conexion = null;
 		Statement sql = null;
-		// ResultSet rs = null;
+
 
 		String url = "jdbc:mysql://" + "localhost" + ":" + "3306" + "/" + "productos" + "?useSSL=false";
 
@@ -197,23 +193,18 @@ public class LecturaBBDD extends javax.swing.JFrame{
 
 	public static void crearItem(String txt_id, String txt_marca, Double txt_precio, Double txt_dcto, String combo,
 			String txt_color, Integer txt_teclas, String txt_conector) throws Exception {
-		DefaultTableModel modelo = new DefaultTableModel();
+
 
 		Connection conexion = null;
 		Statement sql = null;
-		// ResultSet rs = null;
 
 		String url = "jdbc:mysql://" + "localhost" + ":" + "3306" + "/" + "productos" + "?useSSL=false";
-		txt_color.toUpperCase();
-		// Teclado teclado = new Teclado();
+
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			try {
 				conexion = DriverManager.getConnection(url, "root", "");
 				System.out.println("Conexión establecida");
-				// String query = "update instrumentos set marca = 'FENDER', precio = '300',
-				// descuento = '10', tipo = 'Regular', color = 'GRIS', teclas = '61', conector =
-				// 'MIDI', envio = '15€', pvp = '3000' where (codigo = 't32');";
 				String query = "insert into instrumentos (codigo , marca , precio , descuento , tipo, color, teclas, conector) values ('"
 						+ txt_id.toLowerCase() + "','" + txt_marca.toUpperCase() + "','" + txt_precio + "','" + txt_dcto + "','" + combo + "','"
 						+ txt_color.toUpperCase() + "','" + txt_teclas + "','" + txt_conector.toUpperCase() +
@@ -236,11 +227,9 @@ public class LecturaBBDD extends javax.swing.JFrame{
 	}
 
 	public static void borrarItem(String txt_code) throws Exception {
-		DefaultTableModel modelo = new DefaultTableModel();
 
 		Connection conexion = null;
 		Statement sql = null;
-		// ResultSet rs = null;
 
 		String url = "jdbc:mysql://" + "localhost" + ":" + "3306" + "/" + "productos" + "?useSSL=false";
 		try {

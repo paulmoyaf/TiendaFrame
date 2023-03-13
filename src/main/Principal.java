@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import formularios.Formulario;
-import formularios.Tabla;
+import tabla.Tabla;
 import formularios.FormListener;
 
 public class Principal {
