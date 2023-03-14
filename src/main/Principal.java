@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import formularios.Formulario;
+import formularios.Test;
 import tabla.Tabla;
 import formularios.FormListener;
 
@@ -13,6 +14,9 @@ public class Principal {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
         try {
+
+            // Test test = new Test();
+            // test.setVisible(true);
 
             Formulario form = new Formulario();
             FormListener le = new FormListener();

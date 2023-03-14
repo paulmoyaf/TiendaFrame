@@ -183,6 +183,7 @@ public class LecturaBBDD extends javax.swing.JFrame{
 				System.out.println("\nCerrando la conexión");
 
 			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "Error con los datos ingresados\n" + e, "Error", 0);
 				System.out.println("ERROR AL EJECUTAR LA SENTENCIA SQL" + e);
 			}
 		} catch (ClassNotFoundException e) {
@@ -191,12 +192,12 @@ public class LecturaBBDD extends javax.swing.JFrame{
 
 	}
 
-	public static void crearItem(String txt_id, String txt_marca, Double txt_precio, Double txt_dcto, String combo,
-			String txt_color, Integer txt_teclas, String txt_conector) throws Exception {
-
-
+	public static Boolean crearItem(String txt_id, String txt_marca, Double txt_precio, Double txt_dcto, String combo,
+		String txt_color, Integer txt_teclas, String txt_conector) throws Exception {
+		
 		Connection conexion = null;
 		Statement sql = null;
+		boolean bool = false;
 
 		String url = "jdbc:mysql://" + "localhost" + ":" + "3306" + "/" + "productos" + "?useSSL=false";
 
@@ -215,15 +216,16 @@ public class LecturaBBDD extends javax.swing.JFrame{
 				System.out.println("\nInstrumento creado satisfactoriamente....");
 				conexion.close();
 				System.out.println("\nCerrando la conexión");
+				bool = true;
 
 			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "Error con los datos ingresados\n" + e, "Error", 0);
 				System.out.println("ERROR AL EJECUTAR LA SENTENCIA SQL" + e);
 			}
 		} catch (ClassNotFoundException e) {
 			System.out.println("Error del controlador " + e);
 		}
-
-		// return teclado;
+		return bool;
 	}
 
 	public static void borrarItem(String txt_code) throws Exception {

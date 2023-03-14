@@ -286,7 +286,7 @@ public class Formulario extends JFrame implements ActionListener {
       if (lb_temp.getText().equals("crear")) {
 
         if(Formulario.crearItem()==true){
-          Formulario.crearItem();
+          // Formulario.crearItem();
           Formulario.habilitarTXT();
           Formulario.funcionLimpiar();
           rs = null;
@@ -463,6 +463,8 @@ public class Formulario extends JFrame implements ActionListener {
       tabla = new Tabla();
       tabla.setLocationRelativeTo(null);
       tabla.setVisible(true);
+      tabla.setSize(800, 500);
+      // tabla.setExtendedState(MAXIMIZED_BOTH);
     } catch (ClassNotFoundException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -663,7 +665,8 @@ public class Formulario extends JFrame implements ActionListener {
   }
 
   public static boolean crearItem() {
-    boolean bool = true;
+    boolean bool = false;
+    
     try {
         Double total = Double.parseDouble(txt_precio.getText())
             - ((Double.parseDouble(txt_precio.getText()) * Double.parseDouble(txt_dcto.getText())) / 100);
@@ -676,18 +679,16 @@ public class Formulario extends JFrame implements ActionListener {
             txt_pvp.setText(String.valueOf(total + 15));
           }
 
-          LecturaBBDD.crearItem(
+          bool = LecturaBBDD.crearItem(
               txt_id.getText(), txt_marca.getText(), Double.parseDouble(txt_precio.getText()),
               Double.parseDouble(txt_dcto.getText()), String.valueOf(combo.getSelectedItem()), txt_color.getText(),
               Integer.parseInt(txt_teclas.getText()),
               txt_conector.getText());
 
-
           } catch (Exception e1) {
             e1.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error, verifica que esten bien ingresados los datos\n" + e1,
             "Error de Datos", 0);
-            bool = false;
           }
     return bool;
   }

@@ -2,6 +2,7 @@ package tabla;
 
 
 import java.awt.BorderLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import formularios.LecturaBBDD;
 import productos.Producto;
@@ -27,8 +29,7 @@ public class Tabla extends JFrame {
     private static JButton btAdd, btBorrar, btCambiar, btGuardar, btCancel;
     private static ImageIcon imageCambiar = new ImageIcon("icono/cambiar1.png");
     private static ImageIcon imageBorrar = new ImageIcon("icono/eliminar1.png");
-    private static JLabel lb_codeTemp;
-    
+    private static JLabel lb_codeTemp;    
 
     public Tabla() throws Exception {
         String[] columnas = {"Código", "Marca", "Precio", "Descuento", "Tipo", "Color","Teclas","Conector","Envío","PVP","1","2"};
@@ -40,29 +41,25 @@ public class Tabla extends JFrame {
         // Parametros de la ventana
         this.setTitle("Stock de Productos");
         // this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // this.setLayout(new BorderLayout());
+  
+
+
         
-        // this.setLayout(null);
-        this.setLayout(new BorderLayout());
-
-
         // Modelo de la tabla
         modelo.setColumnIdentifiers(columnas);
 
         // Barras de desplazamiento
         desplazamiento.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         desplazamiento.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        // desplazamiento.setPreferredSize(400,600);
 
         // Propiedades de la tabla
         tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         tabla.setFillsViewportHeight(true);
-
 // 
-        tabla.setModel(modelo);
-        // tabla.getPreferredSize();
-        tabla.setRowHeight(50);
-        // tabla.setEnabled(false);
-
+        // tabla.setModel(modelo);
+        tabla.setRowHeight(50);       
+   
         // Agregamos datos
         this.llenarJTabla(tabla);
         
@@ -103,11 +100,20 @@ public class Tabla extends JFrame {
     }
   
 
+    public static void setColumnWidths(JTable table, int... widths) {
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int i = 0; i < widths.length; i++) {
+            if (i < columnModel.getColumnCount()) {
+                columnModel.getColumn(i).setMaxWidth(widths[i]);
+            }
+            else break;
+        }
+    }
+
     private Teclado obtenerObj(int row) throws Exception {
         Teclado teclado = new Teclado();
 
         try {
-
             String codigo   = tabla.getValueAt(row, 0).toString();
             String marca    = tabla.getValueAt(row, 1).toString();
             String precio   = tabla.getValueAt(row, 2).toString();
